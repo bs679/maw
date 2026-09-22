@@ -1,6 +1,6 @@
 ---
 name: maw
-description: Crawl a website, docs site, git repo, or local folder into a searchable .mv2 file with maw, then search it offline. Use when the user asks to crawl, scrape, archive, index, or "save" a site or docs for later, wants to search across a whole site's content, asks a question that a specific documentation site would answer, or mentions maw, memvid, or a .mv2 file. Also use when web fetching one page at a time is too slow or too shallow and the whole site needs to be searchable.
+description: Crawl a website, docs site, git repo, or local git checkout into a searchable .mv2 file with maw, then search it offline. Use when the user asks to crawl, scrape, archive, index, or "save" a site or docs for later, wants to search across a whole site's content, asks a question that a specific documentation site would answer, or mentions maw, memvid, or a .mv2 file. Also use when web fetching one page at a time is too slow or too shallow and the whole site needs to be searchable.
 license: MIT
 compatibility: Requires Node 20 or newer, network access for crawling, and either a global maw install or npx. Optional Playwright for JavaScript-heavy or bot-protected sites.
 ---
@@ -11,17 +11,14 @@ maw turns a site, repo, or folder into a single `.mv2` file with BM25 (and optio
 
 ## Running it
 
-Check for an install first, then fall back to npx:
+Pick one invocation prefix up front and use it for every command that follows. `npx` runs a package command once; it does not put `maw` on `PATH`, so a bare `maw` after an npx fallback will fail.
 
 ```bash
-maw --version || npx @memvid/maw --version
+if command -v maw >/dev/null 2>&1; then MAW="maw"; else MAW="npx @memvid/maw"; fi
+$MAW --version
 ```
 
-Inside the maw source repository, the CLI can also run without a build:
-
-```bash
-npx tsx bin/maw.ts <args>
-```
+Every example below writes `maw`; substitute `$MAW` (or `npx @memvid/maw`) when there is no global install. Inside the maw source repository, `npx tsx bin/maw.ts` also works without a build.
 
 Requires Node 20 or newer.
 
@@ -36,10 +33,12 @@ Requires Node 20 or newer.
    maw https://docs.example.com -o docs.mv2
    maw https://docs.example.com -o docs.mv2 --depth 4 --max-pages 1000
    maw https://github.com/org/repo -o repo.mv2      # any git repo
-   maw . -o code.mv2                                  # local folder
+   maw . -o code.mv2                                  # local git repo root only
    maw https://a.dev https://b.dev -o both.mv2        # several sources, one file
    ```
    Passing an existing `.mv2` path as a bare argument (`maw https://x.dev docs.mv2`) appends to it.
+
+   A local path is only read from disk when that directory itself contains a `.git` entry. A plain folder or a subdirectory such as `./src` is treated as a hostname and crawled over HTTPS, so run maw from the repository root, or pass a path to one. There is no folder-ingestion mode for non-git directories.
 3. **Search.** Always pass `--json` when the output is for you rather than the user; it is easier to read reliably than the styled table.
    ```bash
    maw find docs.mv2 "useEffect cleanup" --json -k 10
