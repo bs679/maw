@@ -1,6 +1,8 @@
 ---
 name: maw
 description: Crawl a website, docs site, git repo, or local folder into a searchable .mv2 file with maw, then search it offline. Use when the user asks to crawl, scrape, archive, index, or "save" a site or docs for later, wants to search across a whole site's content, asks a question that a specific documentation site would answer, or mentions maw, memvid, or a .mv2 file. Also use when web fetching one page at a time is too slow or too shallow and the whole site needs to be searchable.
+license: MIT
+compatibility: Requires Node 20 or newer, network access for crawling, and either a global maw install or npx. Optional Playwright for JavaScript-heavy or bot-protected sites.
 ---
 
 # maw: crawl once, search forever
@@ -15,7 +17,7 @@ Check for an install first, then fall back to npx:
 maw --version || npx @memvid/maw --version
 ```
 
-Inside this repository, the CLI can also run from source without a build:
+Inside the maw source repository, the CLI can also run without a build:
 
 ```bash
 npx tsx bin/maw.ts <args>
